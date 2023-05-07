@@ -18,16 +18,12 @@ public class CourseRegistrationDao {
 				+ "VALUES "
 				+ "(?, ?)";
 		
-		try {
-			Connection conn = ConnUtils.getConnection();
-			PreparedStatement pstmt = conn.prepareStatement(sql);
+		try (Connection conn = ConnUtils.getConnection();
+			PreparedStatement pstmt = conn.prepareStatement(sql)) {
 			pstmt.setString(1, studentId);
 			pstmt.setInt(2, courseNo);
 			
 			pstmt.executeUpdate();
-			
-			pstmt.close();
-			conn.close();
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
 		}
@@ -41,27 +37,23 @@ public class CourseRegistrationDao {
 				+ "ORDER BY 3, 1";
 		
 		List<CourseRegistration> courseRegistrations = new ArrayList<>();
-		try {
-			Connection conn = ConnUtils.getConnection();
-			PreparedStatement pstmt = conn.prepareStatement(sql);
+		try (Connection conn = ConnUtils.getConnection();
+			PreparedStatement pstmt = conn.prepareStatement(sql)) {
 			pstmt.setString(1, studentId);
 			
-			ResultSet rs = pstmt.executeQuery();
-			while (rs.next()) {
-				courseRegistrations.add(new CourseRegistration(rs.getInt("reg_no"),
-						rs.getInt("course_no"),
-						rs.getString("reg_canceled"),
-						rs.getDate("reg_create_date"),
-						rs.getString("course_name")));
+			try (ResultSet rs = pstmt.executeQuery()) {
+				while (rs.next()) {
+					courseRegistrations.add(new CourseRegistration(rs.getInt("reg_no"),
+							rs.getInt("course_no"),
+							rs.getString("reg_canceled"),
+							rs.getDate("reg_create_date"),
+							rs.getString("course_name")));
+				}
 			}
-			
-			rs.close();
-			pstmt.close();
-			conn.close();
-			return courseRegistrations;
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
 		}
+		return courseRegistrations;
 	}
 	
 	public List<CourseRegistration> getCourseRegistrationsByCourseNo(int courseNo) {
@@ -72,26 +64,22 @@ public class CourseRegistrationDao {
 				+ "ORDER BY 3, 1";
 		
 		List<CourseRegistration> courseRegistrations = new ArrayList<>();
-		try {
-			Connection conn = ConnUtils.getConnection();
-			PreparedStatement pstmt = conn.prepareStatement(sql);
+		try (Connection conn = ConnUtils.getConnection();
+			PreparedStatement pstmt = conn.prepareStatement(sql)) {
 			pstmt.setInt(1, courseNo);
 			
-			ResultSet rs = pstmt.executeQuery();
-			while (rs.next()) {
-				courseRegistrations.add(new CourseRegistration(rs.getInt("reg_no"),
-						rs.getString("student_name"),
-						rs.getString("reg_canceled"),
-						rs.getDate("reg_create_date")));
+			try (ResultSet rs = pstmt.executeQuery()) {
+				while (rs.next()) {
+					courseRegistrations.add(new CourseRegistration(rs.getInt("reg_no"),
+							rs.getString("student_name"),
+							rs.getString("reg_canceled"),
+							rs.getDate("reg_create_date")));
+				}
 			}
-			
-			rs.close();
-			pstmt.close();
-			conn.close();
-			return courseRegistrations;
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
 		}
+		return courseRegistrations;
 	}
 	
 	public int countValidCourseRegistrationWithStudentAndCourseNo(String studentId, int courseNo) {
@@ -102,20 +90,15 @@ public class CourseRegistrationDao {
 				+ "AND REG_CANCELED = 'N'"
 				+ "AND ROWNUM = 1";
 
-		try {
-			Connection conn = ConnUtils.getConnection();
-			PreparedStatement pstmt = conn.prepareStatement(sql);
+		try (Connection conn = ConnUtils.getConnection();
+			PreparedStatement pstmt = conn.prepareStatement(sql)) {
 			pstmt.setString(1, studentId);
 			pstmt.setInt(2, courseNo);
 			
-			ResultSet rs = pstmt.executeQuery();
-			rs.next();
-			int cnt = rs.getInt("cnt");
-			
-			rs.close();
-			pstmt.close();
-			conn.close();
-			return cnt;
+			try (ResultSet rs = pstmt.executeQuery()) {
+				rs.next();
+				return rs.getInt("cnt");
+			}
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
 		}
@@ -127,15 +110,11 @@ public class CourseRegistrationDao {
 				+ "REG_CANCELED = 'Y' "
 				+ "WHERE COURSE_NO = ?";
 		
-		try {
-			Connection conn = ConnUtils.getConnection();
-			PreparedStatement pstmt = conn.prepareStatement(sql);
+		try (Connection conn = ConnUtils.getConnection();
+			PreparedStatement pstmt = conn.prepareStatement(sql)) {
 			pstmt.setInt(1, courseNo);
 			
 			pstmt.executeUpdate();
-			
-			pstmt.close();
-			conn.close();
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
 		}
@@ -147,15 +126,11 @@ public class CourseRegistrationDao {
 				+ "REG_CANCELED = 'Y' "
 				+ "WHERE REG_NO = ?";
 		
-		try {
-			Connection conn = ConnUtils.getConnection();
-			PreparedStatement pstmt = conn.prepareStatement(sql);
+		try (Connection conn = ConnUtils.getConnection();
+			PreparedStatement pstmt = conn.prepareStatement(sql)) {
 			pstmt.setInt(1, regNo);
 			
 			pstmt.executeUpdate();
-			
-			pstmt.close();
-			conn.close();
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
 		}

@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,19 +16,12 @@ public class CourseDao {
 	public int getSequence() {
 		String sql = "SELECT ACADEMY_COURSE_SEQ.NEXTVAL AS SEQ FROM DUAL";
 		
-		try {
-			Connection conn = ConnUtils.getConnection();
+		try (Connection conn = ConnUtils.getConnection();
 			PreparedStatement pstmt = conn.prepareStatement(sql);
 			
-			ResultSet rs = pstmt.executeQuery();
-			
+			ResultSet rs = pstmt.executeQuery()) {
 			rs.next();
-			int seq = rs.getInt("seq");
-			
-			rs.close();
-			pstmt.close();
-			conn.close();
-			return seq;
+			return rs.getInt("seq");
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
 		}
@@ -39,18 +33,14 @@ public class CourseDao {
 				+ "VALUES "
 				+ "(?, ?, ?, ?)";
 		
-		try {
-			Connection conn = ConnUtils.getConnection();
-			PreparedStatement pstmt = conn.prepareStatement(sql);
+		try (Connection conn = ConnUtils.getConnection();
+			PreparedStatement pstmt = conn.prepareStatement(sql)) {
 			pstmt.setInt(1, course.getNo());
 			pstmt.setString(2, course.getName());
 			pstmt.setInt(3, course.getQuota());
 			pstmt.setString(4, course.getTeacherIdOrName());
 			
 			pstmt.executeUpdate();
-			
-			pstmt.close();
-			conn.close();
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
 		}
@@ -63,27 +53,23 @@ public class CourseDao {
 				+ "ORDER BY 1";
 		
 		List<Course> courses = new ArrayList<>();
-		try {
-			Connection conn = ConnUtils.getConnection();
-			PreparedStatement pstmt = conn.prepareStatement(sql);
+		try (Connection conn = ConnUtils.getConnection();
+			PreparedStatement pstmt = conn.prepareStatement(sql)) {
 			pstmt.setString(1, id);
 			
-			ResultSet rs = pstmt.executeQuery();
-			while (rs.next()) {
-				courses.add(new Course(rs.getInt("course_no"),
-						rs.getString("course_name"),
-						rs.getInt("course_quota"),
-						rs.getInt("course_reg_cnt"),
-						rs.getString("course_status")));
+			try (ResultSet rs = pstmt.executeQuery()) {
+				while (rs.next()) {
+					courses.add(new Course(rs.getInt("course_no"),
+							rs.getString("course_name"),
+							rs.getInt("course_quota"),
+							rs.getInt("course_reg_cnt"),
+							rs.getString("course_status")));
+				}
 			}
-			
-			rs.close();
-			pstmt.close();
-			conn.close();
-			return courses;
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
 		}
+		return courses;
 	}
 	
 	public Course getCourseByNo(int no) {
@@ -93,28 +79,24 @@ public class CourseDao {
 				+ "AND ROWNUM = 1";
 		
 		Course course = null;
-		try {
-			Connection conn = ConnUtils.getConnection();
-			PreparedStatement pstmt = conn.prepareStatement(sql);
+		try (Connection conn = ConnUtils.getConnection();
+			PreparedStatement pstmt = conn.prepareStatement(sql)) {
 			pstmt.setInt(1, no);
 			
-			ResultSet rs = pstmt.executeQuery();
-			if (rs.next()) {
-				course = new Course(rs.getString("course_name"),
-									rs.getInt("course_quota"),
-									rs.getInt("course_reg_cnt"),
-									rs.getString("course_status"),
-									rs.getDate("course_create_date"),
-									rs.getString("teacher_id"));
+			try (ResultSet rs = pstmt.executeQuery()) {
+				if (rs.next()) {
+					course = new Course(rs.getString("course_name"),
+							rs.getInt("course_quota"),
+							rs.getInt("course_reg_cnt"),
+							rs.getString("course_status"),
+							rs.getDate("course_create_date"),
+							rs.getString("teacher_id"));
+				}
 			}
-			
-			rs.close();
-			pstmt.close();
-			conn.close();
-			return course;
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
 		}
+		return course;
 	}
 	
 	public List<Course> getAvailableCoursesWithTeacherName() {
@@ -125,11 +107,10 @@ public class CourseDao {
 				+ "ORDER BY 1";
 		
 		List<Course> courses = new ArrayList<>();
-		try {
-			Connection conn = ConnUtils.getConnection();
-			PreparedStatement pstmt = conn.prepareStatement(sql);
+		try (Connection conn = ConnUtils.getConnection();
+			Statement pstmt = conn.createStatement();
 			
-			ResultSet rs = pstmt.executeQuery();
+			ResultSet rs = pstmt.executeQuery(sql)) {
 			while (rs.next()) {
 				Course course = new Course(rs.getInt("course_no"),
 										rs.getString("course_name"),
@@ -138,14 +119,10 @@ public class CourseDao {
 				course.setRegCnt(rs.getInt("course_reg_cnt"));
 				courses.add(course);
 			}
-			
-			rs.close();
-			pstmt.close();
-			conn.close();
-			return courses;
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
 		}
+		return courses;
 	}
 	
 	public void updateCourseRegCntAndStatus(int courseNo, int courseRegCnt, String status) {
@@ -155,17 +132,13 @@ public class CourseDao {
 				+ "COURSE_STATUS = ? "
 				+ "WHERE COURSE_NO = ?";
 		
-		try {
-			Connection conn = ConnUtils.getConnection();
-			PreparedStatement pstmt = conn.prepareStatement(sql);
+		try (Connection conn = ConnUtils.getConnection();
+			PreparedStatement pstmt = conn.prepareStatement(sql)) {
 			pstmt.setInt(1, courseRegCnt);
 			pstmt.setString(2, status);
 			pstmt.setInt(3, courseNo);
 			
 			pstmt.executeUpdate();
-			
-			pstmt.close();
-			conn.close();
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
 		}

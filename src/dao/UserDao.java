@@ -23,9 +23,8 @@ public class UserDao {
 					+ "VALUES "
 					+ "(?, ?, ?, ?, ?, 0)";
 		}
-		try {
-			Connection conn = ConnUtils.getConnection();
-			PreparedStatement pstmt = conn.prepareStatement(sql);
+		try (Connection conn = ConnUtils.getConnection();
+			PreparedStatement pstmt = conn.prepareStatement(sql)) {
 			pstmt.setString(1, user.getId());
 			pstmt.setString(2, user.getPassword());
 			pstmt.setString(3, user.getName());
@@ -36,9 +35,6 @@ public class UserDao {
 //			else pstmt.setNull(5, java.sql.Types.VARCHAR);
 			
 			pstmt.executeUpdate();
-			
-			pstmt.close();
-			conn.close();
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
 		}
@@ -71,35 +67,30 @@ public class UserDao {
 					+ "FROM ACADEMY_TEACHERS "
 					+ "WHERE TEACHER_ID = ?";
 		}
-		try {
-			User user = null;
-			Connection conn = ConnUtils.getConnection();
-			PreparedStatement pstmt = conn.prepareStatement(sql);
+		User user = null;
+		try (Connection conn = ConnUtils.getConnection();
+			PreparedStatement pstmt = conn.prepareStatement(sql)) {
 			pstmt.setString(1, id);
 			
-			ResultSet rs = pstmt.executeQuery();
-			if (rs.next()) {
-				if (type == 's') {
-					user = new User(rs.getString("student_id"),
-							rs.getString("student_password"),
-							rs.getString("student_name"),
-							rs.getString("student_deleted"));
-				} else if (type == 't') {
-					user = new User(rs.getString("teacher_id"),
-							rs.getString("teacher_password"),
-							rs.getString("teacher_name"),
-							rs.getString("teacher_retired"));
+			try (ResultSet rs = pstmt.executeQuery()) {
+				if (rs.next()) {
+					if (type == 's') {
+						user = new User(rs.getString("student_id"),
+								rs.getString("student_password"),
+								rs.getString("student_name"),
+								rs.getString("student_deleted"));
+					} else if (type == 't') {
+						user = new User(rs.getString("teacher_id"),
+								rs.getString("teacher_password"),
+								rs.getString("teacher_name"),
+								rs.getString("teacher_retired"));
+					}
 				}
 			}
-			
-			rs.close();
-			pstmt.close();
-			conn.close();
-			
-			return user;
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
 		}
+		return user;
 	}
 
 //	public User getStudentById(String id) {
