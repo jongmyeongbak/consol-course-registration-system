@@ -17,9 +17,9 @@ public class CourseDao {
 		String sql = "SELECT ACADEMY_COURSE_SEQ.NEXTVAL AS SEQ FROM DUAL";
 		
 		try (Connection conn = ConnUtils.getConnection();
-			PreparedStatement pstmt = conn.prepareStatement(sql);
+			Statement pstmt = conn.createStatement();
 			
-			ResultSet rs = pstmt.executeQuery()) {
+			ResultSet rs = pstmt.executeQuery(sql)) {
 			rs.next();
 			return rs.getInt("seq");
 		} catch (SQLException e) {
