@@ -253,7 +253,10 @@ public class CourseController {
 
 	private void 강사회원가입() {
 		System.out.println("<< 강사 등록 >>");
-		userService.registerUser(가입정보입력(), 't');
+		User user = 가입정보입력();
+		System.out.print("### 급여:");
+		user.setSalary(keyboard.readInt());
+		userService.registerUser(user, 't');
 		System.out.println("### 신규 강사 등록이 완료되었습니다.");
 	}
 	

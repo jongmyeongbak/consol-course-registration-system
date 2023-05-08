@@ -27,7 +27,7 @@ public class UserDao {
 			sql = "INSERT INTO ACADEMY_TEACHERS"
 					+ "(TEACHER_ID, TEACHER_PASSWORD, TEACHER_NAME, TEACHER_PHONE, TEACHER_EMAIL, TEACHER_SALARY) "
 					+ "VALUES "
-					+ "(?, ?, ?, ?, ?, 0)";
+					+ "(?, ?, ?, ?, ?, ?)";
 		}
 		try (Connection conn = ConnUtils.getConnection();
 			PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -39,6 +39,9 @@ public class UserDao {
 				pstmt.setString(5, user.getEmail());
 //			}
 //			else pstmt.setNull(5, java.sql.Types.VARCHAR);
+			if (type == 't') {
+				pstmt.setInt(6, user.getSalary());
+			}
 			
 			pstmt.executeUpdate();
 		} catch (SQLException e) {
