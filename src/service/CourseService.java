@@ -9,8 +9,8 @@ import vo.CourseRegistration;
 
 public class CourseService {
 
-	private CourseDao courseDao = new CourseDao();
-	private CourseRegistrationDao courseRegistrationDao = new CourseRegistrationDao();
+	private CourseDao courseDao = CourseDao.getInstance();
+	private CourseRegistrationDao courseRegistrationDao = CourseRegistrationDao.getInstance();
 	
 	public int createCourse(String name, int quota, String teacherId) {
 		int no = courseDao.getSequence();

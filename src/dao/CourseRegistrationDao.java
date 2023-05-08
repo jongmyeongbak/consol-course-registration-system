@@ -11,6 +11,12 @@ import util.ConnUtils;
 import vo.CourseRegistration;
 
 public class CourseRegistrationDao {
+	
+	private static final CourseRegistrationDao instance = new CourseRegistrationDao();
+	private CourseRegistrationDao() {}
+	public static CourseRegistrationDao getInstance() {
+		return instance;
+	}
 
 	public void insertCourseRegistration(String studentId, int courseNo) {
 		String sql = "INSERT INTO ACADEMY_COURSE_REGISTRATIONS "
