@@ -8,6 +8,12 @@ import vo.Course;
 import vo.CourseRegistration;
 
 public class CourseService {
+	
+	private static CourseService instance = new CourseService();
+	private CourseService() {}
+	public static CourseService getInstance() {
+		return instance;
+	}
 
 	private CourseDao courseDao = CourseDao.getInstance();
 	private CourseRegistrationDao courseRegistrationDao = CourseRegistrationDao.getInstance();

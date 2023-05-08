@@ -12,7 +12,7 @@ import vo.User;
 public class CourseController {
 
 	private KeyboardReader keyboard = new KeyboardReader();
-	private CourseService courseService = new CourseService();
+	private CourseService courseService = CourseService.getInstance();
 	private UserService userService = UserService.getInstance();
 	private LoginUser loginUser;
 	
