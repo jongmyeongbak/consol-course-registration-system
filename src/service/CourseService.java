@@ -49,7 +49,7 @@ public class CourseService {
 	}
 	
 	public List<Course> availableCourses() {
-		return courseDao.getAvailableCoursesWithTeacherName();
+		return courseDao.getAvailableCoursesWithTeacherName("모집중");
 	}
 	
 	public String registerCourse(String studentId, int courseNo) {

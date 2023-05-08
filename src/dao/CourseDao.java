@@ -12,6 +12,12 @@ import util.ConnUtils;
 import vo.Course;
 
 public class CourseDao {
+	
+	private static final CourseDao instance = new CourseDao();
+	private CourseDao() {}
+	public static CourseDao getInstance() {
+		return instance;
+	}
 
 	public int getSequence() {
 		String sql = "SELECT ACADEMY_COURSE_SEQ.NEXTVAL AS SEQ FROM DUAL";
@@ -99,25 +105,27 @@ public class CourseDao {
 		return course;
 	}
 	
-	public List<Course> getAvailableCoursesWithTeacherName() {
+	public List<Course> getAvailableCoursesWithTeacherName(String status) {
 		String sql = "SELECT C.COURSE_NO, C.COURSE_NAME, C.COURSE_QUOTA, C.COURSE_REG_CNT, T.TEACHER_NAME "
 				+ "FROM ACADEMY_COURSES C, ACADEMY_TEACHERS T "
 				+ "WHERE C.TEACHER_ID = T.TEACHER_ID "
-				+ "AND COURSE_STATUS = '모집중' "
+				+ "AND COURSE_STATUS = ? "
 				+ "ORDER BY 1";
 		
 		List<Course> courses = new ArrayList<>();
 		try (Connection conn = ConnUtils.getConnection();
-			Statement pstmt = conn.createStatement();
+			PreparedStatement pstmt = conn.prepareStatement(sql)) {
+			pstmt.setString(1, status);
 			
-			ResultSet rs = pstmt.executeQuery(sql)) {
-			while (rs.next()) {
-				Course course = new Course(rs.getInt("course_no"),
-										rs.getString("course_name"),
-										rs.getInt("course_quota"),
-										rs.getString("teacher_name"));
-				course.setRegCnt(rs.getInt("course_reg_cnt"));
-				courses.add(course);
+			try (ResultSet rs = pstmt.executeQuery()) {
+				while (rs.next()) {
+					Course course = new Course(rs.getInt("course_no"),
+							rs.getString("course_name"),
+							rs.getInt("course_quota"),
+							rs.getString("teacher_name"));
+					course.setRegCnt(rs.getInt("course_reg_cnt"));
+					courses.add(course);
+				}
 			}
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
