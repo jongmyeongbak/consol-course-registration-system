@@ -10,7 +10,7 @@ import vo.User;
 
 public class UserDao {
 	
-	private static UserDao instance = new UserDao();
+	private static final UserDao instance = new UserDao();
 	private UserDao() {}
 	public static UserDao getInstance() {
 		return instance;

@@ -6,7 +6,7 @@ import vo.User;
 
 public class UserService {
 	
-	private static UserService instance = new UserService();
+	private static final UserService instance = new UserService();
 	private UserService() {}
 	public static UserService getInstance() {
 		return instance;
