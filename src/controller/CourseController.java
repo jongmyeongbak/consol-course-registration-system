@@ -125,7 +125,7 @@ public class CourseController {
 	private void 학생신청취소() {
 		System.out.println("<< 수강 신청 취소 >>");
 		System.out.println("### 본인이 신청한 과정의 등록번호를 입력하여 취소하세요.");
-		System.out.print("### 등록번호: ");
+		System.out.print("### 등록번호:");
 		int regNo = keyboard.readInt();
 		System.out.println(courseService.dropCourse(loginUser.getId(), regNo));
 	}
