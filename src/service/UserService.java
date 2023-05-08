@@ -27,9 +27,10 @@ public class UserService {
 	
 	public LoginUser login(String id, String password, char type) {
 		User savedUser = dao.getUserById(id, type);
-		if (savedUser == null || savedUser.getInvalid() == "Y") {
+		if (savedUser == null || "Y".equals(savedUser.getInvalid())) {
 			throw new RuntimeException("[" + id + "] 아이디는 유효하지 않습니다. 다른 아이디를 입력하세요.");
-		} else if (!savedUser.getPassword().equals(password)) {
+		}
+		if (!savedUser.getPassword().equals(password)) {
 			throw new RuntimeException("비밀번호가 일치하지 않습니다.");
 		}
 		return new LoginUser(id, savedUser.getName(), (type == 't') ? "강사" : "학생");
