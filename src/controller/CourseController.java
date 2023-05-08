@@ -235,10 +235,12 @@ public class CourseController {
 
 	private void 강사로그인() {
 		System.out.println("<< 강사 로그인 >>");
+		System.out.println("아이디, 비밀번호를 입력하여 로그인하세요.");
 		System.out.print("### 아이디:");
 		String id = keyboard.readString();
 		System.out.print("### 비밀번호:");
 		String password = keyboard.readString();
+		
 		loginUser = userService.login(id, password, 't');
 		System.out.println("### 로그인되었습니다.");
 	}
