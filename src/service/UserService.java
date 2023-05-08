@@ -5,8 +5,14 @@ import dao.UserDao;
 import vo.User;
 
 public class UserService {
+	
+	private static UserService instance = new UserService();
+	private UserService() {}
+	public static UserService getInstance() {
+		return instance;
+	}
 
-	private UserDao dao = new UserDao();
+	private UserDao dao = UserDao.getInstance();
 	
 	public void registerUser(User user, char type) {
 		User savedUser = dao.getUserById(user.getId(), type);

@@ -10,6 +10,12 @@ import vo.User;
 
 public class UserDao {
 	
+	private static UserDao instance = new UserDao();
+	private UserDao() {}
+	public static UserDao getInstance() {
+		return instance;
+	}
+	
 	public void insertUser(User user, char type) {
 		String sql = null;
 		if (type == 's') {

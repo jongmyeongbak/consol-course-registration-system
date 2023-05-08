@@ -13,7 +13,7 @@ public class CourseController {
 
 	private KeyboardReader keyboard = new KeyboardReader();
 	private CourseService courseService = new CourseService();
-	private UserService userService = new UserService();
+	private UserService userService = UserService.getInstance();
 	private LoginUser loginUser;
 	
 	public static void main(String[] args) {
