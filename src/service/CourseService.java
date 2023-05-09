@@ -84,7 +84,7 @@ public class CourseService {
 				Course course = courseDao.getCourseByNo(courseNo);
 				int regCnt = course.getRegCnt() - 1;
 				String status = (regCnt < course.getQuota()) ? "모집중" : "모집완료";
-				courseRegistrationDao.updateCourseRegCanceled(regNo);
+				courseRegistrationDao.updateCourseRegCanceled("Y", regNo);
 				courseDao.updateCourseRegCntAndStatus(courseNo, regCnt, status);
 				return "[" + course.getName() + "] 수강신청이 취소되었습니다.";
 			}

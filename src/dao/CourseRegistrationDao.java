@@ -126,15 +126,16 @@ public class CourseRegistrationDao {
 		}
 	}
 	
-	public void updateCourseRegCanceled(int regNo) {
+	public void updateCourseRegCanceled(String canceled, int regNo) {
 		String sql = "UPDATE ACADEMY_COURSE_REGISTRATIONS "
 				+ "SET "
-				+ "REG_CANCELED = 'Y' "
+				+ "REG_CANCELED = ? "
 				+ "WHERE REG_NO = ?";
 		
 		try (Connection conn = ConnUtils.getConnection();
 			PreparedStatement pstmt = conn.prepareStatement(sql)) {
-			pstmt.setInt(1, regNo);
+			pstmt.setString(1, canceled);
+			pstmt.setInt(2, regNo);
 			
 			pstmt.executeUpdate();
 		} catch (SQLException e) {
